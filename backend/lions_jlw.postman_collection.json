@@ -1,0 +1,89 @@
+{
+  "info": {
+    "name": "Lions JLW API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" },
+    { "key": "token", "value": "" },
+    { "key": "pedidoId", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/registrar",
+            "body": { "mode": "raw", "raw": "{\n  \"nombre\": \"Cliente Lions\",\n  \"email\": \"cliente@lionsjlw.com\",\n  \"telefono\": \"3219429510\",\n  \"password\": \"Lions#2026\"\n}" }
+          }
+        },
+        {
+          "name": "Iniciar sesion",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["const data = pm.response.json();", "if (data.token) pm.collectionVariables.set('token', data.token);"] }
+          }],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"cliente@lionsjlw.com\",\n  \"password\": \"Lions#2026\"\n}" }
+          }
+        },
+        {
+          "name": "Perfil",
+          "request": { "method": "GET", "url": "{{baseUrl}}/auth/perfil" }
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Crear pedido",
+          "event": [{
+            "listen": "test",
+            "script": { "exec": ["const data = pm.response.json();", "if (data.pedido) pm.collectionVariables.set('pedidoId', data.pedido._id);"] }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/pedidos",
+            "body": { "mode": "raw", "raw": "{\n  \"producto\": \"camiseta\",\n  \"tecnica\": \"dtf\",\n  \"cantidad\": 12,\n  \"descripcion\": \"Logo del equipo en el pecho, color blanco\"\n}" }
+          }
+        },
+        {
+          "name": "Traer pedidos",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pedidos" }
+        },
+        {
+          "name": "Traer pedido por id",
+          "request": { "method": "GET", "url": "{{baseUrl}}/pedidos/{{pedidoId}}" }
+        },
+        {
+          "name": "Actualizar pedido",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/pedidos/{{pedidoId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"estado\": \"en_diseno\",\n  \"cantidad\": 15\n}" }
+          }
+        },
+        {
+          "name": "Eliminar pedido",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/pedidos/{{pedidoId}}" }
+        }
+      ]
+    }
+  ]
+}
