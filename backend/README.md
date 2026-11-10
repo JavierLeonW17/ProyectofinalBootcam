@@ -15,6 +15,12 @@ npm run dev
 
 Requiere MongoDB corriendo en `mongodb://127.0.0.1:27017` (base de datos `lions_jlw`).
 
+## Cómo abrir la página
+
+Con el backend corriendo, abre `index.html` con Live Server (o doble clic). Desde ahí se puede crear una cuenta, iniciar sesión y hacer pedidos en `pedidos.html`. La dirección del backend está en `api.js`.
+
+Para ver los datos, abre MongoDB Compass y conéctate a `mongodb://127.0.0.1:27017`. Ahí aparece la base `lions_jlw` con las colecciones `users` y `pedidos`.
+
 ## Estructura
 
 ```
