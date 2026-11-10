@@ -25,6 +25,7 @@ const loginValidator = [
     .notEmpty().withMessage('El email es obligatorio')
     .isEmail().withMessage('Debes enviar un email valido'),
   body('password')
+    .isString().withMessage('El password no es valido')
     .notEmpty().withMessage('El password es obligatorio')
 ]
 

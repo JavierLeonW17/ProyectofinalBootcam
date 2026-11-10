@@ -44,14 +44,14 @@ const login = async (peticion, respuesta) => {
     const { email, password } = peticion.body
     const user = await User.findOne({ email })
 
-    if (!user) return respuesta.status(404).json({
-      msg: 'Usuario no existe'
+    if (!user) return respuesta.status(401).json({
+      msg: 'Correo o contraseña incorrectos'
     })
 
     const passwordsCoinciden = await bcrypt.compare(password, user.password)
 
     if (!passwordsCoinciden) return respuesta.status(401).json({
-      msg: 'Contraseña incorrecta'
+      msg: 'Correo o contraseña incorrectos'
     })
 
     const token = jwt.sign(

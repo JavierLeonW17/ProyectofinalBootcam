@@ -12,3 +12,10 @@ document.querySelectorAll('.menu a').forEach(enlace => {
     menu.classList.remove('abierto');
   });
 });
+
+// Si ya inicio sesion, cambia "Ingresar" por "Mis pedidos"
+if (localStorage.getItem('token')) {
+  const enlaceCuenta = document.getElementById('enlaceCuenta');
+  enlaceCuenta.textContent = 'MIS PEDIDOS';
+  enlaceCuenta.href = 'pedidos.html';
+}
