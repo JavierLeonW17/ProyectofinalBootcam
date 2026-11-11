@@ -1,67 +1,55 @@
-# Lions JLW — Proyecto final Bootcam
+# Lions JLW - Proyecto final Bootcam
 
-Página y API REST para Lions JLW (estampado y personalización). Un cliente puede registrarse, iniciar sesión y gestionar sus pedidos de estampado: crearlos, verlos en cards, consultar el detalle, editarlos y eliminarlos.
+Pagina de Lions JLW (estampado y personalizacion) con su backend. El cliente se puede registrar, iniciar sesion y hacer sus pedidos de estampado. Los pedidos se ven en cards y se pueden ver, editar y eliminar.
 
-**Frontend:** HTML, CSS y JavaScript (sin frameworks), adaptable a celular.
+Frontend: HTML, CSS y JavaScript.
+Backend: Node.js, Express, MongoDB con Mongoose, express-validator, bcrypt y JWT.
 
-**Backend:** Node.js, Express, MongoDB + Mongoose, express-validator, bcrypt, JSON Web Token.
+## Como correrlo
 
-## Cómo correrlo
+Primero tener MongoDB prendido en `mongodb://127.0.0.1:27017`. La base se llama `lions_jlw`.
 
-```bash
+```
 cd backend
 npm install
-cp .env.example .env   # y cambia SECRET_KEY
 npm run dev
 ```
 
-Requiere MongoDB corriendo en `mongodb://127.0.0.1:27017` (base de datos `lions_jlw`).
+Hay que crear el archivo `.env` copiando `.env.example` y poner una SECRET_KEY.
 
-## Cómo abrir la página
+Despues abrir `index.html` con Live Server. Desde ahi se crea la cuenta, se inicia sesion y se hacen los pedidos en `pedidos.html`.
 
-Con el backend corriendo, abre `index.html` con Live Server (o doble clic). Desde ahí se puede crear una cuenta, iniciar sesión y hacer pedidos en `pedidos.html`. La dirección del backend está en `api.js`.
+Para ver los datos se abre MongoDB Compass, se conecta a `mongodb://127.0.0.1:27017` y en `lions_jlw` estan las colecciones `users` y `pedidos`.
 
-Para ver los datos, abre MongoDB Compass y conéctate a `mongodb://127.0.0.1:27017`. Ahí aparece la base `lions_jlw` con las colecciones `users` y `pedidos`.
+## Archivos
 
-## Estructura
+- `index.html`, `estilos.css`, `script.js`: pagina de inicio
+- `registro.html` y `registro.js`: crear cuenta
+- `login.html` y `login.js`: iniciar sesion, guarda el token
+- `pedidos.html` y `pedidos.js`: crear, ver, editar y eliminar pedidos
+- `api.js`: la funcion `pedirApi` que hace los fetch al backend
+- `backend/`: el servidor (config, models, routes, controllers, validators y middlewares)
 
-```
-index.html, estilos.css, script.js   # página de inicio
-registro.html / registro.js          # crear cuenta
-login.html / login.js                # iniciar sesión (guarda el token)
-pedidos.html / pedidos.js            # CRUD de pedidos con cards
-api.js                               # función pedirApi para hablar con el backend
+## Rutas del backend
 
-backend/
-├── index.js                 # servidor Express
-├── config/db.js             # conexión a MongoDB
-├── models/                  # User, Pedido
-├── routes/                  # auth.routes, pedido.routes
-├── controllers/             # lógica de cada endpoint
-├── validators/              # reglas de express-validator
-└── middlewares/             # validate (errores de validación), auth (JWT)
-```
+Autenticacion:
+- POST `/api/auth/registrar` - crear usuario (nombre, email, telefono, password)
+- POST `/api/auth/login` - devuelve el token (dura 1 hora)
+- GET `/api/auth/perfil` - datos del usuario (necesita token)
 
-## Endpoints
+Pedidos (todas necesitan token):
+- POST `/api/pedidos` - crear pedido (producto, tecnica, cantidad, descripcion)
+- GET `/api/pedidos` - traer mis pedidos
+- GET `/api/pedidos/:id` - traer un pedido
+- PUT `/api/pedidos/:id` - editar pedido
+- DELETE `/api/pedidos/:id` - eliminar pedido
 
-| Método | Ruta | Auth | Descripción |
-|---|---|---|---|
-| POST | `/api/auth/registrar` | — | Crea un usuario (`nombre`, `email`, `telefono`, `password`) |
-| POST | `/api/auth/login` | — | Devuelve un token JWT (1 h) |
-| GET | `/api/auth/perfil` | Bearer | Datos del usuario autenticado |
-| POST | `/api/pedidos` | Bearer | Crea un pedido (`producto`, `tecnica`, `cantidad`, `descripcion`) |
-| GET | `/api/pedidos` | Bearer | Lista los pedidos del usuario |
-| GET | `/api/pedidos/:id` | Bearer | Trae un pedido |
-| PUT | `/api/pedidos/:id` | Bearer | Actualiza un pedido (incluye `estado`) |
-| DELETE | `/api/pedidos/:id` | Bearer | Elimina un pedido |
+Productos: camiseta, gorra, mug, termo.
+Tecnicas: dtf, sublimacion, plancha.
+Estados: pendiente, en_diseno, aprobado, estampando, entregado, cancelado.
 
-Valores permitidos:
-- `producto`: camiseta, gorra, mug, termo
-- `tecnica`: dtf, sublimacion, plancha
-- `estado`: pendiente, en_diseno, aprobado, estampando, entregado, cancelado
-
-Cada usuario solo puede ver y modificar sus propios pedidos.
+Cada usuario solo ve sus propios pedidos.
 
 ## Postman
 
-Importa `backend/lions_jlw.postman_collection.json`. El request **Iniciar sesion** guarda el token automáticamente, y **Crear pedido** guarda el `pedidoId`, así el resto de requests funcionan sin copiar y pegar.
+En `backend/lions_jlw.postman_collection.json` esta la coleccion. Al hacer el login el token se guarda solo, y al crear un pedido se guarda el id para usarlo en las otras peticiones.
